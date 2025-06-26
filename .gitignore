@@ -42,5 +42,7 @@ node_modules/
 # Local configuration
 _config_local.yml
 
+build-apple/
+
 # Do NOT ignore Gemfile.lock - it should be tracked for consistent builds
 # Gemfile.lock should be committed to ensure reproducible builds 
