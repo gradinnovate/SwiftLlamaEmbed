@@ -1,0 +1,33 @@
+<!-- Hero Section -->
+<section id="home" class="hero-section">
+  <div class="hero-background">
+    <div class="hero-pattern"></div>
+  </div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-text">
+        {% if include.data.subtitle %}
+        <p class="hero-subtitle">{{ include.data.subtitle }}</p>
+        {% endif %}
+
+        <h1 class="hero-title">
+          {{ include.data.title }} {% if include.data.hero_image %}
+          <img
+            src="{{ include.data.hero_image | relative_url }}"
+            alt="Avatar"
+            class="hero-avatar"
+          />
+          {% endif %}
+        </h1>
+
+        {% if include.data.description %}
+        <h2 class="hero-description">{{ include.data.description }}</h2>
+        {% endif %} {% if include.data.cta_text and include.data.cta_link %}
+        <a href="{{ include.data.cta_link }}" class="cta-button">
+          {{ include.data.cta_text }}
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>

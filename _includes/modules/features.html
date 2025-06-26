@@ -1,0 +1,39 @@
+<!-- Features Section -->
+<section id="features" class="features-section">
+  <div class="container">
+    {% if include.data.title or include.data.subtitle %}
+    <div class="section-header">
+      {% if include.data.title %}
+      <h2>{{ include.data.title }}</h2>
+      {% endif %} {% if include.data.subtitle %}
+      <p>{{ include.data.subtitle }}</p>
+      {% endif %}
+    </div>
+    {% endif %} {% if include.data.features_list %}
+    <div class="features-grid">
+      {% for feature in include.data.features_list %}
+      <div class="feature-card">
+        {% if feature.image %}
+        <img
+          src="{{ feature.image }}"
+          alt="{{ feature.title }}"
+          class="feature-image"
+        />
+        {% endif %}
+        <div class="feature-content">
+          {% if feature.icon %}
+          <div class="feature-icon">
+            <i class="{{ feature.icon }}"></i>
+          </div>
+          {% endif %} {% if feature.title %}
+          <h3 class="feature-title">{{ feature.title }}</h3>
+          {% endif %} {% if feature.description %}
+          <p class="feature-description">{{ feature.description }}</p>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>

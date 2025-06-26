@@ -1,0 +1,109 @@
+<!-- Project Overview Section -->
+<section id="project" class="project-section">
+  <div class="container">
+    <!-- Project Promo Video -->
+    {% if include.data.promo_video %}
+    <div class="video-container">
+      <div class="simple-video-wrapper">
+        <video
+          class="video-player"
+          controls
+          preload="metadata"
+          muted
+          playsinline
+          width="100%"
+        >
+          <source
+            src="{{ include.data.promo_video | relative_url }}"
+            type="video/mp4"
+          />
+          <p>Your browser does not support the video tag.</p>
+        </video>
+        <button class="big-play-button" onclick="playVideo(this)">
+          <i class="fas fa-play"></i>
+        </button>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="project-content">
+      <div class="project-info">
+        {% if include.data.title or include.data.subtitle %}
+        <div class="section-header">
+          {% if include.data.title %}
+          <h2>{{ include.data.title }}</h2>
+          {% endif %} {% if include.data.subtitle %}
+          <p>{{ include.data.subtitle }}</p>
+          {% endif %}
+        </div>
+        {% endif %} {% if include.data.description %}
+        <div class="project-description">
+          <p>{{ include.data.description }}</p>
+        </div>
+        {% endif %} {% if include.data.demo_url or include.data.github_url or
+        include.data.download_url %}
+        <div class="project-actions">
+          {% if include.data.demo_url %}
+          <a
+            href="{{ include.data.demo_url }}"
+            class="btn-primary"
+            target="_blank"
+          >
+            <i class="fas fa-external-link-alt"></i>
+            Live Demo
+          </a>
+          {% endif %} {% if include.data.github_url %}
+          <a
+            href="{{ include.data.github_url }}"
+            class="btn-secondary"
+            target="_blank"
+          >
+            <i class="fab fa-github"></i>
+            View Source
+          </a>
+          {% endif %} {% if include.data.download_url %}
+          <a href="{{ include.data.download_url }}" class="btn-download">
+            <i class="fas fa-download"></i>
+            Download
+          </a>
+          {% endif %}
+        </div>
+        {% endif %} {% if include.data.technologies %}
+        <div class="project-tech">
+          <h3>Technologies Used</h3>
+          <div class="tech-stack">
+            {% for tech in include.data.technologies %}
+            <span class="tech-tag">{{ tech }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="project-showcase">
+        {% if include.data.main_image %}
+        <div class="showcase-main">
+          <img
+            src="{{ include.data.main_image | relative_url }}"
+            alt="{{ include.data.title }}"
+            class="project-main-image"
+          />
+        </div>
+        {% endif %} {% if include.data.screenshots %}
+        <div class="showcase-gallery">
+          {% for screenshot in include.data.screenshots %}
+          <div class="gallery-item">
+            <img
+              src="{{ screenshot.image | relative_url }}"
+              alt="{{ screenshot.title }}"
+              class="gallery-image"
+            />
+            <p class="gallery-caption">{{ screenshot.title }}</p>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,46 @@
+<!-- Video Demo Section -->
+{% if include.data.demo_video %}
+<section id="demo-video" class="video-section">
+  <div class="container">
+    <div class="video-grid">
+      <div class="video-info">
+        {% if include.data.title %}
+        <h3>{{ include.data.title }}</h3>
+        {% endif %} {% if include.data.description %}
+        <p>{{ include.data.description }}</p>
+        {% endif %} {% if include.data.demo_url %}
+        <a
+          href="{{ include.data.demo_url }}"
+          class="btn-primary"
+          target="_blank"
+        >
+          <i class="fas fa-external-link-alt"></i>
+          Try Live Demo
+        </a>
+        {% endif %}
+      </div>
+      <div class="video-demo">
+        <div class="simple-video-wrapper">
+          <video
+            class="video-player"
+            controls
+            preload="metadata"
+            muted
+            playsinline
+            width="100%"
+          >
+            <source
+              src="{{ include.data.demo_video | relative_url }}"
+              type="video/mp4"
+            />
+            <p>Your browser does not support the video tag.</p>
+          </video>
+          <button class="big-play-button" onclick="playVideo(this)">
+            <i class="fas fa-play"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}

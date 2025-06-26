@@ -1,0 +1,62 @@
+<!-- About Section -->
+<section id="about" class="about-section">
+  <div class="container">
+    <div class="about-content">
+      <div class="about-text">
+        {% if include.data.title %}
+        <h2>{{ include.data.title }}</h2>
+        {% endif %} {% if include.data.description %}
+        <p class="about-description">{{ include.data.description }}</p>
+        {% endif %} {% if include.data.skills %}
+        <div class="skills-grid">
+          {% for skill in include.data.skills %}
+          <div class="skill-item">
+            {% if skill.icon %}
+            <div class="skill-icon">
+              <i class="{{ skill.icon }}"></i>
+            </div>
+            {% endif %}
+            <div class="skill-info">
+              {% if skill.name %}
+              <h4>{{ skill.name }}</h4>
+              {% endif %} {% if skill.description %}
+              <p>{{ skill.description }}</p>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="about-image">
+        {% if include.data.about_image %}
+        <img
+          src="{{ include.data.about_image | relative_url }}"
+          alt="About"
+          class="about-img"
+        />
+        {% endif %} {% if include.data.stats %}
+        <div class="about-stats">
+          {% if include.data.stats.projects %}
+          <div class="stat-item">
+            <span class="stat-number">{{ include.data.stats.projects }}</span>
+            <span class="stat-label">Projects</span>
+          </div>
+          {% endif %} {% if include.data.stats.clients %}
+          <div class="stat-item">
+            <span class="stat-number">{{ include.data.stats.clients }}</span>
+            <span class="stat-label">Clients</span>
+          </div>
+          {% endif %} {% if include.data.stats.experience %}
+          <div class="stat-item">
+            <span class="stat-number">{{ include.data.stats.experience }}</span>
+            <span class="stat-label">Years</span>
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>

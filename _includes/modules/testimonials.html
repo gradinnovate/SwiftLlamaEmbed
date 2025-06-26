@@ -1,0 +1,58 @@
+<!-- Testimonials Section -->
+<section id="testimonials" class="testimonials-section">
+  <div class="container">
+    {% if include.data.title %}
+    <div class="section-header">
+      <h2>{{ include.data.title }}</h2>
+    </div>
+    {% endif %} {% if include.data.testimonials_list %}
+    <div class="testimonials-slider">
+      <!-- Navigation arrows -->
+      <button class="testimonial-nav prev-btn">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <div class="testimonials-container">
+        {% for testimonial in include.data.testimonials_list %}
+        <div class="testimonial-card">
+          <div class="testimonial-content">
+            {% if testimonial.content %}
+            <p class="testimonial-text">"{{ testimonial.content }}"</p>
+            {% endif %}
+            <div class="testimonial-author">
+              {% if testimonial.avatar %}
+              <img
+                src="{{ testimonial.avatar | relative_url }}"
+                alt="{{ testimonial.author }}"
+                class="author-avatar"
+              />
+              {% endif %}
+              <div class="author-info">
+                {% if testimonial.author %}
+                <h4 class="author-name">{{ testimonial.author }}</h4>
+                {% endif %} {% if testimonial.position %}
+                <p class="author-position">{{ testimonial.position }}</p>
+                {% endif %} {% if testimonial.company %}
+                <p class="author-company">{{ testimonial.company }}</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <button class="testimonial-nav next-btn">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+      <!-- Dots indicator -->
+      <div class="testimonial-dots">
+        {% for testimonial in include.data.testimonials_list %}
+        <button
+          class="dot{% if forloop.first %} active{% endif %}"
+          data-index="{{ forloop.index0 }}"
+        ></button>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>

@@ -1,0 +1,43 @@
+# 界面元素翻譯 - 繁體中文
+nav:
+  home: "首頁"
+  about: "關於"
+  project: "專案"
+  features: "特色"
+  contact: "聯絡"
+
+theme:
+  choose: "選擇主題"
+  default: "預設"
+  ocean: "海洋藍"
+  emerald: "翡翠綠"
+  sunset: "夕陽橙"
+  rose: "玫瑰粉"
+  cyberpunk: "賽博紫"
+
+# 通用按鈕和標籤
+buttons:
+  demo: "即時演示"
+  github: "查看原始碼"
+  download: "下載"
+
+# 表單元素
+form:
+  name: "姓名"
+  email: "電子郵件"
+  subject: "主題"
+  message: "訊息"
+  submit: "發送訊息"
+  sending: "發送中..."
+
+# 統計標籤
+stats:
+  projects: "專案"
+  clients: "客戶"
+  experience: "年經驗"
+
+# 頁腳
+footer:
+  quick_links: "快速連結"
+  connect: "聯繫我們"
+  rights: "版權所有。"

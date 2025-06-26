@@ -1,0 +1,182 @@
+<!-- Contact Section -->
+<section id="contact" class="contact-section">
+  <div class="container">
+    {% if include.data.title or include.data.subtitle %}
+    <div class="section-header">
+      {% if include.data.title %}
+      <h2>{{ include.data.title }}</h2>
+      {% endif %} {% if include.data.subtitle %}
+      <p>{{ include.data.subtitle }}</p>
+      {% endif %}
+    </div>
+    {% endif %} {% if include.data.contact_form_enabled and
+    site.formspree.enabled %}
+    <div class="contact-form-container">
+      <!-- Formspree Contact Form -->
+      <form
+        class="form"
+        id="contactForm"
+        action="{{ site.formspree.endpoint }}"
+        method="POST"
+      >
+        <div class="form-group">
+          <label for="name"
+            >{{ site.data.languages[page.lang].form.name | default: "Name"
+            }}</label
+          >
+          <input type="text" id="name" name="name" required />
+        </div>
+
+        <div class="form-group">
+          <label for="email"
+            >{{ site.data.languages[page.lang].form.email | default: "Email"
+            }}</label
+          >
+          <input type="email" id="email" name="email" required />
+        </div>
+
+        <div class="form-group">
+          <label for="subject"
+            >{{ site.data.languages[page.lang].form.subject | default: "Subject"
+            }}</label
+          >
+          <input type="text" id="subject" name="subject" required />
+        </div>
+
+        <div class="form-group">
+          <label for="message"
+            >{{ site.data.languages[page.lang].form.message | default: "Message"
+            }}</label
+          >
+          <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+
+        <!-- Honeypot field for spam protection -->
+        <input type="text" name="_gotcha" style="display: none !important" />
+
+        <button type="submit" class="btn-primary submit-btn">
+          <span class="btn-text">
+            <i class="fas fa-paper-plane"></i>
+            {{ site.data.languages[page.lang].form.submit | default: "Send
+            Message" }}
+          </span>
+          <span class="btn-loading" style="display: none">
+            <i class="fas fa-spinner fa-spin"></i>
+            {{ site.data.languages[page.lang].form.sending | default:
+            "Sending..." }}
+          </span>
+        </button>
+      </form>
+    </div>
+    {% elsif include.data.contact_form_enabled %}
+    <div class="contact-form-container">
+      <div
+        class="form-setup-notice"
+        style="
+          background: var(--bg-secondary);
+          padding: 2rem;
+          border-radius: var(--border-radius-lg);
+          border-left: 4px solid var(--primary-color);
+        "
+      >
+        <h3 style="color: var(--primary-color); margin-bottom: 1rem">
+          <i class="fas fa-exclamation-triangle"></i> Contact Form Setup
+          Required
+        </h3>
+        <p style="margin-bottom: 1rem">
+          To enable the contact form, please complete the Formspree setup:
+        </p>
+        <ol style="margin-bottom: 1.5rem; padding-left: 1.5rem">
+          <li>
+            Visit
+            <a
+              href="https://formspree.io"
+              target="_blank"
+              style="color: var(--primary-color)"
+              >Formspree.io</a
+            >
+            and create a free account
+          </li>
+          <li>Create a new form and get your form ID</li>
+          <li>
+            Update
+            <code
+              style="
+                background: var(--bg-primary);
+                padding: 0.2rem 0.4rem;
+                border-radius: 4px;
+              "
+              >_config.yml</code
+            >
+            with:
+            <pre
+              style="
+                background: var(--bg-primary);
+                padding: 1rem;
+                border-radius: 8px;
+                margin: 0.5rem 0;
+                overflow-x: auto;
+              "
+            ><code>formspree:
+  enabled: true
+  endpoint: "https://formspree.io/f/YOUR_FORM_ID"</code></pre>
+          </li>
+          <li>Restart your Jekyll server</li>
+        </ol>
+        <p>
+          📖 For detailed instructions, see
+          <strong>CONTACT_FORM_SETUP.md</strong>
+        </p>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Contact Info -->
+    {% assign contact_email = include.data.contact_email | default: site.email
+    %} {% if contact_email or include.data.show_social %}
+    <div class="contact-info">
+      {% if contact_email %}
+      <div class="contact-item">
+        <div class="contact-icon">
+          <i class="fas fa-envelope"></i>
+        </div>
+        <div class="contact-details">
+          <h4>Email</h4>
+          <a href="mailto:{{ contact_email }}">
+            {{ contact_email }}
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+      {% endif %} {% if include.data.show_social %} {% if site.social.linkedin
+      %}
+      <div class="contact-item">
+        <div class="contact-icon">
+          <i class="fab fa-linkedin-in"></i>
+        </div>
+        <div class="contact-details">
+          <h4>LinkedIn</h4>
+          <a href="{{ site.social.linkedin }}" target="_blank">
+            Connect with me
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+      {% endif %} {% if site.social.github %}
+      <div class="contact-item">
+        <div class="contact-icon">
+          <i class="fab fa-github"></i>
+        </div>
+        <div class="contact-details">
+          <h4>GitHub</h4>
+          <a href="{{ site.social.github }}" target="_blank">
+            View my work
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+      {% endif %} {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>

@@ -1,0 +1,53 @@
+name: Check for broken links
+
+on:
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - "assets/**"
+      - "_sass/**"
+      - "_scripts/**"
+      - "**.bib"
+      - "**.html"
+      - "**.js"
+      - "**.liquid"
+      - "**/*.md"
+      - "**.yml"
+      - "Gemfile"
+      - "Gemfile.lock"
+      - "!.github/workflows/prettier.yml"
+  pull_request:
+    branches:
+      - master
+      - main
+    paths:
+      - "assets/**"
+      - "_sass/**"
+      - "_scripts/**"
+      - "**.bib"
+      - "**.html"
+      - "**.js"
+      - "**.liquid"
+      - "**/*.md"
+      - "**.yml"
+      - "Gemfile"
+      - "Gemfile.lock"
+      - "!.github/workflows/prettier.yml"
+  workflow_dispatch:
+
+jobs:
+  link-checker:
+    runs-on: ubuntu-latest
+    # only run on the main repo
+    if: github.repository == 'gradinnovate/CodeFolio'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Link Checker 🔗
+        uses: lycheeverse/lychee-action@v2.1.0
+        with:
+          fail: true
+          # removed md files that include liquid tags
+          args: --user-agent 'curl/7.54' --exclude-path README.md --exclude-path _includes/ --exclude-path _layouts/ --verbose --no-progress './**/*.md'

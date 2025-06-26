@@ -1,0 +1,43 @@
+# Interface elements translation - English
+nav:
+  home: "Home"
+  about: "About"
+  project: "Project"
+  features: "Features"
+  contact: "Contact"
+
+theme:
+  choose: "Choose Theme"
+  default: "Default"
+  ocean: "Ocean Blue"
+  emerald: "Emerald Green"
+  sunset: "Sunset Orange"
+  rose: "Rose Pink"
+  cyberpunk: "Cyberpunk Purple"
+
+# Common buttons and labels
+buttons:
+  demo: "Live Demo"
+  github: "View Source"
+  download: "Download"
+
+# Form elements
+form:
+  name: "Name"
+  email: "Email"
+  subject: "Subject"
+  message: "Message"
+  submit: "Send Message"
+  sending: "Sending..."
+
+# Statistics labels
+stats:
+  projects: "Projects"
+  clients: "Clients"
+  experience: "Years"
+
+# Footer
+footer:
+  quick_links: "Quick Links"
+  connect: "Connect"
+  rights: "All rights reserved."

@@ -1,0 +1,43 @@
+# 界面元素翻译 - 简体中文
+nav:
+  home: "首页"
+  about: "关于"
+  project: "项目"
+  features: "特色"
+  contact: "联系"
+
+theme:
+  choose: "选择主题"
+  default: "默认"
+  ocean: "海洋蓝"
+  emerald: "翡翠绿"
+  sunset: "夕阳橙"
+  rose: "玫瑰粉"
+  cyberpunk: "赛博紫"
+
+# 通用按钮和标签
+buttons:
+  demo: "实时演示"
+  github: "查看源码"
+  download: "下载"
+
+# 表单元素
+form:
+  name: "姓名"
+  email: "电子邮件"
+  subject: "主题"
+  message: "消息"
+  submit: "发送消息"
+  sending: "发送中..."
+
+# 统计标签
+stats:
+  projects: "项目"
+  clients: "客户"
+  experience: "年经验"
+
+# 页脚
+footer:
+  quick_links: "快速链接"
+  connect: "联系我们"
+  rights: "版权所有。"

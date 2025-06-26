@@ -1,0 +1,46 @@
+# Jekyll build files
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# Ruby
+.bundle/
+vendor/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Node modules (if using npm/yarn)
+node_modules/
+
+# Local configuration
+_config_local.yml
+
+# Do NOT ignore Gemfile.lock - it should be tracked for consistent builds
+# Gemfile.lock should be committed to ensure reproducible builds 

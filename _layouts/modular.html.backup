@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="{{ page.lang | default: site.default_lang }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ page.title | default: site.title }}</title>
+    <meta
+      name="description"
+      content="{{ page.description | default: site.description }}"
+    />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}" />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Color Theme Configuration -->
+    <meta
+      name="site-color-theme"
+      content="{{ site.color_theme | default: 'default' }}"
+    />
+    <meta
+      name="show-color-theme-switcher"
+      content="{{ site.show_color_theme_switcher | default: false }}"
+    />
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ '/assets/images/favicon.ico' | relative_url }}"
+    />
+  </head>
+
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="container">
+        <div class="nav-content">
+          <!-- Logo/Title -->
+          <div class="nav-brand">
+            <a href="{{ '/' | relative_url }}">
+              <span class="brand-text">{{ site.title }}</span>
+            </a>
+          </div>
+
+          <!-- Navigation Links -->
+          <div class="nav-links">
+            {% if page.modules.hero %}
+            <a href="#home" class="nav-link"
+              >{{ site.data.languages[page.lang].nav.home | default: "Home"
+              }}</a
+            >
+            {% endif %} {% if page.modules.project %}
+            <a href="#project" class="nav-link"
+              >{{ site.data.languages[page.lang].nav.project | default:
+              "Project" }}</a
+            >
+            {% endif %} {% if page.modules.about %}
+            <a href="#about" class="nav-link"
+              >{{ site.data.languages[page.lang].nav.about | default: "About"
+              }}</a
+            >
+            {% endif %} {% if page.modules.features %}
+            <a href="#features" class="nav-link"
+              >{{ site.data.languages[page.lang].nav.features | default:
+              "Features" }}</a
+            >
+            {% endif %} {% if page.modules.contact %}
+            <a href="#contact" class="nav-link"
+              >{{ site.data.languages[page.lang].nav.contact | default:
+              "Contact" }}</a
+            >
+            {% endif %}
+          </div>
+
+          <!-- Theme Controls -->
+          <div class="nav-controls">
+            <!-- Color Theme Switcher -->
+            <div class="color-theme-switcher">
+              <button class="color-theme-toggle" id="colorThemeToggle">
+                <i class="fas fa-palette"></i>
+              </button>
+              <div class="color-theme-dropdown" id="colorThemeDropdown">
+                <div class="color-theme-label">
+                  {{ site.data.languages[page.lang].theme.choose | default:
+                  "Choose Theme" }}
+                </div>
+                <div class="color-theme-options">
+                  <button
+                    class="color-theme-option active"
+                    data-theme="default"
+                  >
+                    <span class="color-preview default-preview"></span>
+                    {{ site.data.languages[page.lang].theme.default | default:
+                    "Default" }}
+                  </button>
+                  <button class="color-theme-option" data-theme="ocean">
+                    <span class="color-preview ocean-preview"></span>
+                    {{ site.data.languages[page.lang].theme.ocean | default:
+                    "Ocean" }}
+                  </button>
+                  <button class="color-theme-option" data-theme="emerald">
+                    <span class="color-preview emerald-preview"></span>
+                    {{ site.data.languages[page.lang].theme.emerald | default:
+                    "Emerald" }}
+                  </button>
+                  <button class="color-theme-option" data-theme="sunset">
+                    <span class="color-preview sunset-preview"></span>
+                    {{ site.data.languages[page.lang].theme.sunset | default:
+                    "Sunset" }}
+                  </button>
+                  <button class="color-theme-option" data-theme="rose">
+                    <span class="color-preview rose-preview"></span>
+                    {{ site.data.languages[page.lang].theme.rose | default:
+                    "Rose" }}
+                  </button>
+                  <button class="color-theme-option" data-theme="cyberpunk">
+                    <span class="color-preview cyberpunk-preview"></span>
+                    {{ site.data.languages[page.lang].theme.cyberpunk | default:
+                    "Cyberpunk" }}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dark/Light Theme Toggle -->
+            <button class="theme-toggle" id="themeToggle">
+              <i class="fas fa-moon theme-icon" id="themeIcon"></i>
+            </button>
+
+            <!-- Language Switcher -->
+            <div class="language-switcher">
+              <select id="languageSelect" class="language-select">
+                {% for lang_code in site.languages %}
+                <option value="{{ lang_code }}" {% if page.lang == lang_code %}selected{% endif %}>
+                  {% case lang_code %} {% when 'en' %}English {% when 'zh-TW'
+                  %}繁體中文 {% when 'zh-CN' %}简体中文 {% endcase %}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Mobile menu button -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+      <!-- 動態載入模組 -->
+      {% for module in page.modules %} {% assign module_name = module[0] %} {%
+      assign module_config = module[1] %} {% assign module_template =
+      site.data.modules[module_name].template %}
+
+      <!-- 檢查模組是否啟用 -->
+      {% if module_config.enabled == true %} {% include {{ module_template }}
+      data=module_config %} {% endif %} {% endfor %}
+
+      <!-- 如果沒有定義模組，載入預設內容 -->
+      {% unless page.modules %} {{ content }} {% endunless %}
+    </main>
+
+    <!-- JavaScript -->
+    <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
+  </body>
+</html>

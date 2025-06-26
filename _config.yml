@@ -1,0 +1,68 @@
+# Site settings
+title: CodeFolio Demo
+email: feedback@gradinnovate.com
+description: >- # this means to ignore newlines until "baseurl:"
+  A modern Jekyll theme for showcasing software products
+baseurl: "/CodeFolio" # the subpath of your site, e.g. /blog
+url: "https://gradinnovate.github.io" # the base hostname & protocol for your site
+
+# Favicon settings
+favicon:
+  emoji: "💼" # 使用 emoji 作為 favicon
+
+# Theme settings
+color_theme: "cyberpunk" # 全域預設顏色主題: default, ocean, emerald, sunset, rose, cyberpunk
+show_color_theme_switcher: false # 是否顯示顏色主題選擇器按鈕 (開發時設為 true，發布時設為 false)
+
+# Contact form settings (Formspree)
+# 請前往 https://formspree.io 註冊並創建表單，然後將完整的 endpoint URL 填入下方
+formspree:
+  enabled: true # 是否啟用 Formspree 聯絡表單
+  endpoint: "https://formspree.io/f/meokpngk" # 您的 Formspree 表單完整 endpoint URL
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Server settings
+webrick:
+  headers:
+    Cache-Control: no-cache
+permalink: pretty
+
+# Include additional file types for Jekyll to serve
+include:
+  - _pages
+  - googledae90902bbd1e808.html
+
+# Keep video files and other assets
+keep_files:
+  - assets/videos
+  - assets/images
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-paginate-v2
+  - jemoji
+
+# Multi-language support
+languages: ["en", "zh-TW", "zh-CN"]
+default_lang: "en"
+exclude_from_localization: ["css", "js", "images", "assets"]
+
+# Collections (模組化系統不再需要 collections)
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "default"
+
+# Social media links
+social:
+  github: https://github.com/gradinnovate/CodeFolio
+  email: feedback@gradinnovate.com

@@ -1,0 +1,82 @@
+# 版面模組配置
+# 每個模組都可以在 md 檔案中啟用/停用
+
+hero:
+  name: "Hero Section"
+  description: "主視覺區域，包含標題、副標題和 CTA"
+  required: true
+  template: "modules/hero.html"
+  settings:
+    - background_image
+    - hero_image
+    - title
+    - subtitle
+    - cta_text
+
+project:
+  name: "Project Overview"
+  description: "專案概覽，包含影片、描述和技術棧"
+  required: false
+  template: "modules/project.html"
+  settings:
+    - promo_video
+    - main_image
+    - description
+    - technologies
+    - demo_url
+    - github_url
+    - download_url
+
+about:
+  name: "About Section"
+  description: "關於我/公司的介紹"
+  required: false
+  template: "modules/about.html"
+  settings:
+    - description
+    - skills
+    - stats
+    - about_image
+
+features:
+  name: "Features Section"
+  description: "產品特色展示"
+  required: false
+  template: "modules/features.html"
+  settings:
+    - features_list
+
+video_demo:
+  name: "Video Demo"
+  description: "產品演示影片"
+  required: false
+  template: "modules/video_demo.html"
+  settings:
+    - demo_video
+    - demo_description
+
+testimonials:
+  name: "Testimonials"
+  description: "客戶推薦"
+  required: false
+  template: "modules/testimonials.html"
+  settings:
+    - testimonials_list
+
+contact:
+  name: "Contact Form"
+  description: "聯絡表單"
+  required: false
+  template: "modules/contact.html"
+  settings:
+    - contact_email
+    - contact_form_enabled
+
+footer:
+  name: "Footer"
+  description: "頁腳資訊"
+  required: true
+  template: "modules/footer.html"
+  settings:
+    - social_links
+    - copyright_text
