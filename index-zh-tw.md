@@ -21,8 +21,8 @@ modules:
     title: "專案概覽"
     subtitle: "為 Swift 應用程式提供高效能文本嵌入"
     description: "SwiftLlamaEmbed 為 llama.cpp 的嵌入功能提供了清晰的 Swift 原生介面。以效能和易用性為設計理念，讓開發者只需幾行程式碼就能將強大的文本嵌入功能整合到應用程式中。"
-    promo_video: "/assets/videos/codeflow-promo.mp4"
-    main_image: "/assets/images/project/main-preview.jpg"
+    promo_video:
+    main_image:
     demo_url: "https://github.com/gradinnovate/SwiftLlamaEmbed"
     github_url: "https://github.com/your-gradinnovate/SwiftLlamaEmbed"
     download_url: "https://github.com/gradinnovate/SwiftLlamaEmbed"
@@ -33,7 +33,6 @@ modules:
       - "GGUF"
       - "Metal"
       - "Core ML"
-    
 
   # About 模組
   about:
@@ -41,7 +40,7 @@ modules:
     title: "關於 SwiftLlamaEmbed"
     description: "SwiftLlamaEmbed 在強大的 AI 嵌入模型與 Swift 應用程式之間架起了橋樑。它為 llama.cpp 提供原生 Swift 介面，讓開發者能在 Apple 設備上以最佳效能和隱私保護的方式本地執行嵌入模型。"
     about_image: "/assets/images/about-image.jpg"
-    
+
     skills:
       - name: "多平台支援"
         icon: "fas fa-mobile-alt"
@@ -72,7 +71,6 @@ modules:
   # Video Demo 模組
   video_demo:
     enabled: false
-   
 
   # Testimonials 模組
   testimonials:

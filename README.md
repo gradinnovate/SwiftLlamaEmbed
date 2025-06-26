@@ -23,6 +23,7 @@ dependencies: [
 ```
 
 Or add it through Xcode:
+
 1. Go to File → Add Package Dependencies
 2. Enter the repository URL
 3. Select the version/branch you want to use
@@ -66,14 +67,14 @@ let expandedPath = NSString(string: modelPath).expandingTildeInPath
 
 do {
     let model = try EmbeddingModel(modelPath: expandedPath)
-    
+
     // Generate embeddings for text
     let text = "Hello world, this is a test sentence."
     let embedding = try model.embed(text: text)
-    
+
     print("Embedding dimension: \(model.embeddingDimension)")
     print("Generated embedding: \(embedding.count) values")
-    
+
 } catch {
     print("Error: \(error)")
 }
@@ -239,17 +240,21 @@ The package includes a demo application that showcases the library's functionali
 ### Running the Demo
 
 #### With Custom Model Path:
+
 ```bash
 swift run Demo /path/to/your/model.gguf
 ```
 
 #### With Default Model Path:
+
 ```bash
 swift run Demo
 ```
+
 Uses default path: `~/Documents/SnapGoModels/mxbai-embed-large-v1-q4_k_m.gguf`
 
 #### Examples:
+
 ```bash
 # Using a downloaded model
 swift run Demo ~/Downloads/mxbai-embed-large-v1-q4_k_m.gguf
@@ -341,4 +346,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Acknowledgments
 
 - Built on top of [llama.cpp](https://github.com/ggerganov/llama.cpp)
-- Inspired by the need for local text embeddings in Swift applications 
+- Inspired by the need for local text embeddings in Swift applications

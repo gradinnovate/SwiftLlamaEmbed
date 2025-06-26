@@ -33,7 +33,6 @@ modules:
       - "GGUF"
       - "Metal"
       - "Core ML"
-    
 
   # About Module
   about:
@@ -41,7 +40,7 @@ modules:
     title: "About SwiftLlamaEmbed"
     description: "SwiftLlamaEmbed bridges the gap between powerful AI embedding models and Swift applications. It provides a native Swift interface to llama.cpp, enabling developers to run embedding models locally on Apple devices with optimal performance and privacy."
     about_image: "/assets/images/about-image.jpg"
-   
+
     skills:
       - name: "Multi-Platform Support"
         icon: "fas fa-mobile-alt"
@@ -72,7 +71,6 @@ modules:
   # Video Demo Module
   video_demo:
     enabled: false
-  
 
   # Testimonials Module
   testimonials:
