@@ -10,7 +10,7 @@ modules:
     enabled: true
     title: "SwiftLlamaEmbed"
     subtitle: "Swift • AI • 嵌入向量"
-    description: "強大的 Swift 封裝庫，為 iOS、macOS、tvOS 和 visionOS 應用程式帶來 llama.cpp 的文本嵌入功能。"
+    description: "強大的 Swift 封裝庫，為 iOS 和 macOS 應用程式帶來 llama.cpp 的文本嵌入功能。"
     cta_text: "開始使用"
     cta_link: "#project"
     hero_image: "/assets/images/hero-avatar.jpg"

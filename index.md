@@ -10,7 +10,7 @@ modules:
     enabled: true
     title: "SwiftLlamaEmbed"
     subtitle: "Swift • AI • Embeddings"
-    description: "A powerful Swift wrapper for llama.cpp that brings text embedding capabilities to iOS, macOS, tvOS, and visionOS applications."
+    description: "A powerful Swift wrapper for llama.cpp that brings text embedding capabilities to iOS, and macOS applications."
     cta_text: "Get Started"
     cta_link: "#project"
     hero_image: "/assets/images/hero-avatar.jpg"
@@ -21,8 +21,8 @@ modules:
     title: "Project Overview"
     subtitle: "High-performance text embeddings for Swift applications"
     description: "SwiftLlamaEmbed provides a clean, Swift-native interface to llama.cpp's embedding capabilities. Built with performance and ease-of-use in mind, it enables developers to integrate powerful text embedding functionality into their apps with just a few lines of code."
-    promo_video: "/assets/videos/codeflow-promo.mp4"
-    main_image: "/assets/images/project/main-preview.jpg"
+    promo_video:
+    main_image:
     demo_url: "https://github.com/gradinnovate/SwiftLlamaEmbed"
     github_url: "https://github.com/your-gradinnovate/SwiftLlamaEmbed"
     download_url: "https://github.com/gradinnovate/SwiftLlamaEmbed"

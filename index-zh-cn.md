@@ -10,7 +10,7 @@ modules:
     enabled: true
     title: "SwiftLlamaEmbed"
     subtitle: "Swift • AI • 嵌入向量"
-    description: "强大的 Swift 封装库，为 iOS、macOS、tvOS 和 visionOS 应用程序带来 llama.cpp 的文本嵌入功能。"
+    description: "强大的 Swift 封装库，为 iOS 和 macOS 应用程序带来 llama.cpp 的文本嵌入功能。"
     cta_text: "开始使用"
     cta_link: "#project"
     hero_image: "/assets/images/hero-avatar.jpg"
@@ -21,8 +21,8 @@ modules:
     title: "项目概览"
     subtitle: "为 Swift 应用程序提供高性能文本嵌入"
     description: "SwiftLlamaEmbed 为 llama.cpp 的嵌入功能提供了清晰的 Swift 原生接口。以性能和易用性为设计理念，让开发者只需几行代码就能将强大的文本嵌入功能集成到应用程序中。"
-    promo_video: "/assets/videos/codeflow-promo.mp4"
-    main_image: "/assets/images/project/main-preview.jpg"
+    promo_video:
+    main_image:
     demo_url: "https://github.com/gradinnovate/SwiftLlamaEmbed"
     github_url: "https://github.com/your-gradinnovate/SwiftLlamaEmbed"
     download_url: "https://github.com/gradinnovate/SwiftLlamaEmbed"
