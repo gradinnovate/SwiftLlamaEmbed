@@ -24,7 +24,7 @@ modules:
     promo_video:
     main_image:
     demo_url: "https://github.com/gradinnovate/SwiftLlamaEmbed"
-    github_url: "https://github.com/your-gradinnovate/SwiftLlamaEmbed"
+    github_url: "https://github.com/gradinnovate/SwiftLlamaEmbed"
     download_url: "https://github.com/gradinnovate/SwiftLlamaEmbed"
     technologies:
       - "Swift"
