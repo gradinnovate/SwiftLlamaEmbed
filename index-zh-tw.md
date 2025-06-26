@@ -1,6 +1,6 @@
 ---
 layout: modular
-title: CodeFolio Demo
+title: SwiftLlamaEmbed
 lang: zh-TW
 
 # 模組配置 - 繁體中文版本
@@ -8,9 +8,9 @@ modules:
   # Hero 模組
   hero:
     enabled: true
-    title: "CodeFlow Pro"
-    subtitle: "藝術家 • 設計師 • 思想家"
-    description: "使用 AI 產生的內容做展示"
+    title: "SwiftLlamaEmbed"
+    subtitle: "Swift • AI • 嵌入向量"
+    description: "強大的 Swift 封裝庫，為 iOS、macOS、tvOS 和 visionOS 應用程式帶來 llama.cpp 的文本嵌入功能。"
     cta_text: "開始使用"
     cta_link: "#project"
     hero_image: "/assets/images/hero-avatar.jpg"
@@ -19,101 +19,88 @@ modules:
   project:
     enabled: true
     title: "專案概覽"
-    subtitle: "為解決現實問題而設計的綜合解決方案"
-    description: "這個軟體專案代表了數月的精心規劃、開發和測試。採用現代技術和以用戶為中心的設計原則構建，提供卓越的性能和用戶體驗。"
+    subtitle: "為 Swift 應用程式提供高效能文本嵌入"
+    description: "SwiftLlamaEmbed 為 llama.cpp 的嵌入功能提供了清晰的 Swift 原生介面。以效能和易用性為設計理念，讓開發者只需幾行程式碼就能將強大的文本嵌入功能整合到應用程式中。"
     promo_video: "/assets/videos/codeflow-promo.mp4"
     main_image: "/assets/images/project/main-preview.jpg"
-    demo_url: "https://gradinnovate.github.io/CodeFolio"
-    github_url: "https://github.com/gradinnovate/CodeFolio"
-    download_url: "https://github.com/gradinnovate/CodeFolio"
+    demo_url: "https://github.com/gradinnovate/SwiftLlamaEmbed"
+    github_url: "https://github.com/your-gradinnovate/SwiftLlamaEmbed"
+    download_url: "https://github.com/gradinnovate/SwiftLlamaEmbed"
     technologies:
-      - "React"
-      - "Node.js"
-      - "TypeScript"
-      - "PostgreSQL"
-      - "Docker"
-      - "AWS"
-    screenshots:
-      - title: "儀表板概覽"
-        image: "/assets/images/screenshots/dashboard.jpg"
-      - title: "程式碼編輯器"
-        image: "/assets/images/screenshots/code-editor.jpg"
-      - title: "數據分析"
-        image: "/assets/images/screenshots/analytics.jpg"
+      - "Swift"
+      - "llama.cpp"
+      - "XCFramework"
+      - "GGUF"
+      - "Metal"
+      - "Core ML"
+    
 
   # About 模組
   about:
     enabled: true
-    title: "關於我"
-    description: "我是一名充滿熱情的開發者，致力於創建創新的軟體解決方案，幫助企業成長和成功。憑藉多年現代網頁技術經驗，我專注於構建解決現實問題的用戶友好應用程式。"
+    title: "關於 SwiftLlamaEmbed"
+    description: "SwiftLlamaEmbed 在強大的 AI 嵌入模型與 Swift 應用程式之間架起了橋樑。它為 llama.cpp 提供原生 Swift 介面，讓開發者能在 Apple 設備上以最佳效能和隱私保護的方式本地執行嵌入模型。"
     about_image: "/assets/images/about-image.jpg"
-    stats:
-      projects: "50+"
-      clients: "30+"
-      experience: "5+"
+    
     skills:
-      - name: "前端開發"
-        icon: "fas fa-code"
-        description: "創建響應式和互動式用戶界面"
-      - name: "後端開發"
-        icon: "fas fa-server"
-        description: "構建強大且可擴展的伺服器端應用程式"
-      - name: "資料庫設計"
-        icon: "fas fa-database"
-        description: "設計高效且優化的資料庫結構"
+      - name: "多平台支援"
+        icon: "fas fa-mobile-alt"
+        description: "原生支援 iOS 和 macOS"
+      - name: "高效能"
+        icon: "fas fa-rocket"
+        description: "使用 Metal 和 CPU 加速最佳化"
+      - name: "隱私優先"
+        icon: "fas fa-shield-alt"
+        description: "本地處理，不會將資料傳送到外部伺服器"
 
   # Features 模組
   features:
     enabled: true
-    title: "為什麼選擇我們的解決方案"
-    subtitle: "我們透過尖端技術提供卓越成果"
+    title: "為什麼選擇 SwiftLlamaEmbed"
+    subtitle: "專為現代 Swift 應用程式打造，注重效能表現"
     features_list:
-      - title: "現代技術"
-        icon: "fas fa-rocket"
-        description: "採用最新框架和最佳實踐構建"
-      - title: "可擴展架構"
-        icon: "fas fa-expand-arrows-alt"
-        description: "設計為隨著業務需求成長"
-      - title: "用戶友好設計"
-        icon: "fas fa-users"
-        description: "用戶喜愛互動的直觀界面"
+      - title: "簡易整合"
+        icon: "fas fa-code"
+        description: "簡潔的 Swift API 與完整的文件說明"
+      - title: "本地處理"
+        icon: "fas fa-microchip"
+        description: "完全在設備上執行嵌入模型，保護隱私"
+      - title: "通用相容性"
+        icon: "fas fa-cubes"
+        description: "支援任何 GGUF 格式的嵌入模型"
 
   # Video Demo 模組
   video_demo:
-    enabled: true
-    title: "實際操作演示"
-    description: "觀看我們軟體主要功能和能力的全面演練。了解它如何轉換您的工作流程並提升生產力。"
-    demo_video: "/assets/videos/codeflow-demo.mp4"
-    demo_url: "https://example.com/demo"
+    enabled: false
+   
 
   # Testimonials 模組
   testimonials:
-    enabled: true
-    title: "客戶評價"
+    enabled: false
+    title: "開發者評價"
     testimonials_list:
-      - content: "這個軟體完全改變了我們的開發流程。團隊提供了我們真正需要的東西。"
+      - content: "SwiftLlamaEmbed 讓我們在 iOS 應用程式中添加語義搜尋變得非常簡單。API 清晰，效能出色。"
         author: "Sarah Johnson"
-        position: "技術總監"
-        company: "創新科技有限公司"
+        position: "iOS 開發者"
+        company: "科技公司"
         avatar: "/assets/images/testimonials/sarah.jpg"
-      - content: "出色的工作！對細節的關注和用戶體驗都非常出色。"
+      - content: "終於有原生的 Swift 嵌入解決方案了！本地處理確保了使用者隱私，同時提供優異效能。"
         author: "Jane Chen"
-        position: "產品經理"
-        company: "數位解決方案有限公司"
-        avatar: "/assets/images/testimonials/jane.jpg"
+        position: "首席開發者"
+        company: "隱私優先應用程式"
+        avatar: "/assets/images/testimonials/jane.jpeg"
 
   # Contact 模組
   contact:
     enabled: true
-    title: "聯絡我們"
-    subtitle: "準備開始您的專案？讓我們討論如何幫助您實現目標。"
+    title: "立即開始"
+    subtitle: "準備為您的 Swift 應用程式添加強大的文本嵌入功能？查看我們的文件和範例。"
     contact_form_enabled: true
-    # contact_email: 將自動使用 _config.yml 中的 email 設定
     show_social: true
 
 # SEO 設定
-description: "CodeFlow Pro - 強大的程式碼協作平台，優化開發工作流程"
-keywords: "軟體開發, 協作, 生產力, 網頁開發"
+description: "SwiftLlamaEmbed - 強大的 Swift 封裝庫，為 Apple 平台帶來 llama.cpp 文本嵌入功能"
+keywords: "swift, llama.cpp, 嵌入向量, ios, macos, ai, 機器學習, 文本處理"
 ---
 
 <!-- 所有內容都由模組根據上面的設定動態生成 -->

@@ -1,119 +1,106 @@
 ---
 layout: modular
-title: CodeFolio Demo
+title: SwiftLlamaEmbed
 lang: en
 
-# 模組配置 - 所有設定都在 Markdown 中定義
+# Module Configuration - All settings are defined in Markdown
 modules:
-  # Hero 模組 - 必需模組
+  # Hero Module - Required
   hero:
     enabled: true
-    title: "CodeFlow Pro"
-    subtitle: "Artist • Designer • Thinker"
-    description: "This demo page uses AI-generated contents."
+    title: "SwiftLlamaEmbed"
+    subtitle: "Swift • AI • Embeddings"
+    description: "A powerful Swift wrapper for llama.cpp that brings text embedding capabilities to iOS, macOS, tvOS, and visionOS applications."
     cta_text: "Get Started"
     cta_link: "#project"
     hero_image: "/assets/images/hero-avatar.jpg"
 
-  # Project 模組
+  # Project Module
   project:
     enabled: true
     title: "Project Overview"
-    subtitle: "A comprehensive solution designed to solve real-world problems"
-    description: "This software project represents months of careful planning, development, and testing. Built with modern technologies and user-centered design principles, it delivers exceptional performance and user experience."
+    subtitle: "High-performance text embeddings for Swift applications"
+    description: "SwiftLlamaEmbed provides a clean, Swift-native interface to llama.cpp's embedding capabilities. Built with performance and ease-of-use in mind, it enables developers to integrate powerful text embedding functionality into their apps with just a few lines of code."
     promo_video: "/assets/videos/codeflow-promo.mp4"
     main_image: "/assets/images/project/main-preview.jpg"
-    demo_url: "https://gradinnovate.github.io/CodeFolio"
-    github_url: "https://github.com/gradinnovate/CodeFolio"
-    download_url: "https://github.com/gradinnovate/CodeFolio"
+    demo_url: "https://github.com/gradinnovate/SwiftLlamaEmbed"
+    github_url: "https://github.com/your-gradinnovate/SwiftLlamaEmbed"
+    download_url: "https://github.com/gradinnovate/SwiftLlamaEmbed"
     technologies:
-      - "React"
-      - "Node.js"
-      - "TypeScript"
-      - "PostgreSQL"
-      - "Docker"
-      - "AWS"
-    screenshots:
-      - title: "Dashboard Overview"
-        image: "/assets/images/screenshots/dashboard.jpg"
-      - title: "Code Editor"
-        image: "/assets/images/screenshots/code-editor.jpg"
-      - title: "Analytics"
-        image: "/assets/images/screenshots/analytics.jpg"
+      - "Swift"
+      - "llama.cpp"
+      - "XCFramework"
+      - "GGUF"
+      - "Metal"
+      - "Core ML"
+    
 
-  # About 模組
+  # About Module
   about:
     enabled: true
-    title: "About Me"
-    description: "I'm a passionate developer who creates innovative software solutions that help businesses grow and succeed. With years of experience in modern web technologies, I focus on building user-friendly applications that solve real-world problems."
+    title: "About SwiftLlamaEmbed"
+    description: "SwiftLlamaEmbed bridges the gap between powerful AI embedding models and Swift applications. It provides a native Swift interface to llama.cpp, enabling developers to run embedding models locally on Apple devices with optimal performance and privacy."
     about_image: "/assets/images/about-image.jpg"
-    stats:
-      projects: "50+"
-      clients: "30+"
-      experience: "5+"
+   
     skills:
-      - name: "Frontend Development"
-        icon: "fas fa-code"
-        description: "Creating responsive and interactive user interfaces"
-      - name: "Backend Development"
-        icon: "fas fa-server"
-        description: "Building robust and scalable server-side applications"
-      - name: "Database Design"
-        icon: "fas fa-database"
-        description: "Designing efficient and optimized database structures"
+      - name: "Multi-Platform Support"
+        icon: "fas fa-mobile-alt"
+        description: "Native support for iOS and macOS"
+      - name: "High Performance"
+        icon: "fas fa-rocket"
+        description: "Optimized with Metal and CPU acceleration"
+      - name: "Privacy First"
+        icon: "fas fa-shield-alt"
+        description: "Local processing with no data sent to external servers"
 
-  # Features 模組
+  # Features Module
   features:
     enabled: true
-    title: "Why Choose Our Solutions"
-    subtitle: "We deliver exceptional results through cutting-edge technology"
+    title: "Why Choose SwiftLlamaEmbed"
+    subtitle: "Built for modern Swift applications with performance in mind"
     features_list:
-      - title: "Modern Technology"
-        icon: "fas fa-rocket"
-        description: "Built with the latest frameworks and best practices"
-      - title: "Scalable Architecture"
-        icon: "fas fa-expand-arrows-alt"
-        description: "Designed to grow with your business needs"
-      - title: "User-Friendly Design"
-        icon: "fas fa-users"
-        description: "Intuitive interfaces that users love to interact with"
+      - title: "Easy Integration"
+        icon: "fas fa-code"
+        description: "Simple Swift API with comprehensive documentation"
+      - title: "Local Processing"
+        icon: "fas fa-microchip"
+        description: "Run embedding models entirely on-device for privacy"
+      - title: "Universal Compatibility"
+        icon: "fas fa-cubes"
+        description: "Works with any GGUF format embedding model"
 
-  # Video Demo 模組
+  # Video Demo Module
   video_demo:
-    enabled: true
-    title: "See It In Action"
-    description: "Watch a comprehensive walkthrough of our software's key features and capabilities. See how it can transform your workflow and boost productivity."
-    demo_video: "/assets/videos/codeflow-demo.mp4"
-    demo_url: "https://example.com/demo"
+    enabled: false
+  
 
-  # Testimonials 模組
+  # Testimonials Module
   testimonials:
-    enabled: true
-    title: "What Clients Say"
+    enabled: false
+    title: "What Developers Say"
     testimonials_list:
-      - content: "This software has completely transformed our development process. The team delivered exactly what we needed."
+      - content: "SwiftLlamaEmbed made it incredibly easy to add semantic search to our iOS app. The API is clean and the performance is outstanding."
         author: "Sarah Johnson"
-        position: "CTO"
-        company: "Tech Innovations Inc."
+        position: "iOS Developer"
+        company: "TechCorp Inc."
         avatar: "/assets/images/testimonials/sarah.jpg"
-      - content: "Outstanding work! The attention to detail and user experience is exceptional."
+      - content: "Finally, a native Swift solution for embeddings! The local processing ensures our users' privacy while delivering great performance."
         author: "Jane Chen"
-        position: "Product Manager"
-        company: "Digital Solutions Ltd."
+        position: "Lead Developer"
+        company: "PrivacyFirst Apps"
         avatar: "/assets/images/testimonials/jane.jpeg"
 
-  # Contact 模組
+  # Contact Module
   contact:
     enabled: true
-    title: "Get In Touch"
-    subtitle: "Ready to start your project? Let's discuss how we can help you achieve your goals."
+    title: "Get Started Today"
+    subtitle: "Ready to add powerful text embeddings to your Swift app? Check out our documentation and examples."
     contact_form_enabled: true
-    # contact_email: 將自動使用 _config.yml 中的 email 設定
     show_social: true
 
-# SEO 設定
-description: "CodeFlow Pro - A powerful code collaboration platform that streamlines development workflows"
-keywords: "software development, collaboration, productivity, web development"
+# SEO Settings
+description: "SwiftLlamaEmbed - A powerful Swift wrapper for llama.cpp that brings text embedding capabilities to Apple platforms"
+keywords: "swift, llama.cpp, embeddings, ios, macos, ai, machine learning, text processing"
 ---
 
-<!-- 所有內容都由模組根據上面的設定動態生成 -->
+<!-- All content is dynamically generated by modules based on the above configuration -->
