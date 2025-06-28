@@ -1,6 +1,18 @@
 import Foundation
 import llama
 
+/// Strategy for handling text longer than context size
+public enum LongTextStrategy {
+    /// Simply truncate the text to fit context size
+    case truncate
+    /// Split text into chunks and average their embeddings
+    case chunk(maxChunkSize: Int32, overlap: Int32 = 0)
+    /// Use sliding window approach (take first and last portions)
+    case slidingWindow(windowSize: Int32)
+    /// Automatically choose the best strategy based on text characteristics
+    case auto
+}
+
 /// Errors that can occur when using SwiftLlamaEmbed
 public enum LlamaEmbedError: Error, LocalizedError {
     case modelLoadFailed(String)
@@ -124,6 +136,15 @@ public class EmbeddingModel {
     /// - Parameter text: Input text to generate embeddings for
     /// - Returns: Array of Float values representing the embedding
     public func embed(text: String) throws -> [Float] {
+        return try embed(text: text, strategy: .auto)
+    }
+    
+    /// Generate embeddings for the given text with different strategies for long text
+    /// - Parameters:
+    ///   - text: Input text to generate embeddings for
+    ///   - strategy: Strategy to handle text longer than context size
+    /// - Returns: Array of Float values representing the embedding
+    public func embed(text: String, strategy: LongTextStrategy) throws -> [Float] {
         guard let context = context, let vocab = vocab else {
             throw LlamaEmbedError.contextCreationFailed
         }
@@ -148,14 +169,48 @@ public class EmbeddingModel {
             throw LlamaEmbedError.tokenizationFailed
         }
         
-        // 遵循 embedding.cpp：檢查 token 數量是否超過 batch size
+        // 根據策略處理長文本
         if tokenCount > config.contextSize {
-            // 截斷到 context size，但這可能影響 embedding 品質
-            print("Warning: Input text has \(tokenCount) tokens, exceeding context size \(config.contextSize). Truncating.")
+            let actualStrategy: LongTextStrategy
+            if case .auto = strategy {
+                actualStrategy = chooseOptimalStrategy(text: text, tokenCount: Int(tokenCount))
+            } else {
+                actualStrategy = strategy
+            }
+            
+            switch actualStrategy {
+            case .truncate:
+                print("Warning: Input text has \(tokenCount) tokens, exceeding context size \(config.contextSize). Truncating.")
+                let nTokens = min(Int(tokenCount), Int(config.contextSize))
+                let finalTokens = Array(tokens.prefix(nTokens))
+                return try embedSingleChunk(finalTokens)
+                
+            case .chunk(let maxChunkSize, let overlap):
+                print("Auto-selected chunking strategy for long text (\(tokenCount) tokens)")
+                return try embedWithChunking(tokens: tokens, tokenCount: Int(tokenCount), maxChunkSize: Int(maxChunkSize), overlap: Int(overlap))
+                
+            case .slidingWindow(let windowSize):
+                print("Auto-selected sliding window strategy for long text (\(tokenCount) tokens)")
+                return try embedWithSlidingWindow(tokens: tokens, tokenCount: Int(tokenCount), windowSize: Int(windowSize))
+                
+            case .auto:
+                // This should not happen due to the actualStrategy assignment above
+                fatalError("Auto strategy should have been resolved")
+            }
+        } else {
+            // 文本長度在限制內，直接處理
+            let finalTokens = Array(tokens.prefix(Int(tokenCount)))
+            return try embedSingleChunk(finalTokens)
+        }
+    }
+    
+    /// 處理單個文本塊的 embedding
+    private func embedSingleChunk(_ tokens: [llama_token]) throws -> [Float] {
+        guard let context = context else {
+            throw LlamaEmbedError.contextCreationFailed
         }
         
-        let nTokens = min(Int(tokenCount), Int(config.contextSize))
-        let finalTokens = Array(tokens.prefix(nTokens))
+        let nTokens = tokens.count
 
         // 根據 embedding.cpp 的做法，用 context size 初始化 batch
         var batch = llama_batch_init(Int32(config.contextSize), 0, 1)
@@ -170,7 +225,7 @@ public class EmbeddingModel {
             guard batch.n_tokens < Int32(config.contextSize) else { break }
             
             let batchIndex = Int(batch.n_tokens)
-            batch.token[batchIndex] = finalTokens[i]
+            batch.token[batchIndex] = tokens[i]
             batch.pos[batchIndex] = Int32(i)
             batch.n_seq_id[batchIndex] = 1
             batch.seq_id[batchIndex]![0] = 0  // seq_id = 0
@@ -182,8 +237,8 @@ public class EmbeddingModel {
         llama_set_embeddings(context, true)
         llama_memory_clear(llama_get_memory(context), true)
         
-        // 使用 llama_decode 進行推論（遵循 server 實作）
-        let result = llama_decode(context, batch)
+        // 對於 embedding 模式，直接使用 llama_encode 避免警告訊息
+        let result = llama_encode(context, batch)
         guard result == 0 else {
             throw LlamaEmbedError.encodingFailed
         }
@@ -197,6 +252,109 @@ public class EmbeddingModel {
         
         let embeddings = Array(UnsafeBufferPointer(start: embeddingsPtr, count: embeddingSize))
         return embeddings
+    }
+    
+    /// 使用分塊策略處理長文本
+    private func embedWithChunking(tokens: [llama_token], tokenCount: Int, maxChunkSize: Int, overlap: Int) throws -> [Float] {
+        let chunkSize = min(maxChunkSize, Int(config.contextSize))
+        let stride = chunkSize - overlap
+        
+        var allEmbeddings: [[Float]] = []
+        var start = 0
+        
+        while start < tokenCount {
+            let end = min(start + chunkSize, tokenCount)
+            let chunk = Array(tokens[start..<end])
+            
+            let embedding = try embedSingleChunk(chunk)
+            allEmbeddings.append(embedding)
+            
+            start += stride
+            
+            // 如果剩餘的 tokens 數量小於 stride，則處理最後一塊
+            if start < tokenCount && start + stride >= tokenCount {
+                let lastChunk = Array(tokens[start..<tokenCount])
+                if lastChunk.count > overlap { // 避免重複處理太小的塊
+                    let lastEmbedding = try embedSingleChunk(lastChunk)
+                    allEmbeddings.append(lastEmbedding)
+                }
+                break
+            }
+        }
+        
+        // 平均所有塊的 embeddings
+        return averageEmbeddings(allEmbeddings)
+    }
+    
+    /// 使用滑動窗口策略處理長文本
+    private func embedWithSlidingWindow(tokens: [llama_token], tokenCount: Int, windowSize: Int) throws -> [Float] {
+        let windowSize = min(windowSize, Int(config.contextSize))
+        let halfWindow = windowSize / 2
+        
+        // 取前半部分和後半部分
+        let frontTokens = Array(tokens.prefix(halfWindow))
+        let backTokens = Array(tokens.suffix(halfWindow))
+        
+        let frontEmbedding = try embedSingleChunk(frontTokens)
+        let backEmbedding = try embedSingleChunk(backTokens)
+        
+        // 平均前後兩部分的 embeddings
+        return averageEmbeddings([frontEmbedding, backEmbedding])
+    }
+    
+    /// 計算多個 embeddings 的平均值
+    private func averageEmbeddings(_ embeddings: [[Float]]) -> [Float] {
+        guard !embeddings.isEmpty else { return [] }
+        guard embeddings.count > 1 else { return embeddings[0] }
+        
+        let embeddingSize = embeddings[0].count
+        var averaged = Array(repeating: Float(0.0), count: embeddingSize)
+        
+        for embedding in embeddings {
+            for i in 0..<embeddingSize {
+                averaged[i] += embedding[i]
+            }
+        }
+        
+        let count = Float(embeddings.count)
+        for i in 0..<embeddingSize {
+            averaged[i] /= count
+        }
+        
+        return averaged
+    }
+    
+    /// 智能選擇最佳策略處理長文本
+    private func chooseOptimalStrategy(text: String, tokenCount: Int) -> LongTextStrategy {
+        let contextSize = Int(config.contextSize)
+        let overflowRatio = Double(tokenCount) / Double(contextSize)
+        
+        // 分析文本特徵
+        let lines = text.components(separatedBy: .newlines)
+        let sentences = text.components(separatedBy: CharacterSet(charactersIn: ".!?。！？"))
+        
+        // 決策邏輯
+        switch overflowRatio {
+        case 1.0..<1.5:
+            // 輕微超出，使用滑動窗口保留首尾重要資訊
+            return .slidingWindow(windowSize: Int32(contextSize * 4 / 5))
+            
+        case 1.5..<3.0:
+            // 中等長度，根據結構選擇
+            if lines.count > 10 || sentences.count > 20 {
+                // 結構化文本，使用分塊
+                return .chunk(maxChunkSize: Int32(contextSize * 3 / 4), overlap: Int32(contextSize / 8))
+            } else {
+                // 連續文本，使用滑動窗口
+                return .slidingWindow(windowSize: Int32(contextSize * 4 / 5))
+            }
+            
+        default:
+            // 很長的文本，使用分塊策略
+            let chunkSize = Int32(contextSize * 2 / 3)
+            let overlap = Int32(contextSize / 6)
+            return .chunk(maxChunkSize: chunkSize, overlap: overlap)
+        }
     }
     
     /// Compute cosine similarity between two embeddings

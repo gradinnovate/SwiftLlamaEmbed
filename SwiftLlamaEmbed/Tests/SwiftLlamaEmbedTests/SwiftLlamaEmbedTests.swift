@@ -27,93 +27,20 @@ final class SwiftLlamaEmbedTests: XCTestCase {
         
         do {
             let model = try EmbeddingModel(modelPath: expandedPath)
-            let text = """
+            
+            // Test with normal text (should use auto strategy)
+            let normalText = """
             This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
             The library provides a robust Swift interface to llama.cpp's powerful embedding functionality, 
-            enabling developers to seamlessly integrate advanced text embedding features into their iOS and macOS applications. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            The library provides a robust Swift interface to llama.cpp's powerful embedding functionality, 
-            enabling developers to seamlessly integrate advanced text embedding features into their iOS and macOS applications. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            The library provides a robust Swift interface to llama.cpp's powerful embedding functionality, 
-            enabling developers to seamlessly integrate advanced text embedding features into their iOS and macOS applications. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            The library provides a robust Swift interface to llama.cpp's powerful embedding functionality, 
-            enabling developers to seamlessly integrate advanced text embedding features into their iOS and macOS applications. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
-            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
+            enabling developers to seamlessly integrate advanced text embedding features into their iOS and macOS applications.
             """
-            // 先 tokenize，若超過 contextSize，截斷
-            let contextSize = 512
-            let vocab = model.internalVocab!
-            let maxTokens = Int32(text.utf8.count) + 8
-            var tokens = Array<llama_token>(repeating: 0, count: Int(maxTokens))
-            let tokenCount = llama_tokenize(
-                vocab,
-                text,
-                Int32(text.utf8.count),
-                &tokens,
-                maxTokens,
-                true,
-                false
-            )
-            let nTokens = min(Int(tokenCount), contextSize)
-            let truncatedText: String
-            if nTokens < Int(tokenCount) {
-                // 以 token 為單位反推字元長度
-                let utf8View = text.utf8
-                var charCount = 0
-                var tokenSoFar = 0
-                for (i, c) in utf8View.enumerated() {
-                    charCount = i + 1
-                    var tempTokens = Array<llama_token>(repeating: 0, count: Int(maxTokens))
-                    let tempCount = llama_tokenize(
-                        vocab,
-                        String(text.utf8.prefix(charCount)),
-                        Int32(charCount),
-                        &tempTokens,
-                        maxTokens,
-                        true,
-                        false
-                    )
-                    if Int(tempCount) >= nTokens { break }
-                }
-                let idx = text.utf8.index(text.utf8.startIndex, offsetBy: charCount)
-                truncatedText = String(text.utf8[text.utf8.startIndex..<idx]) ?? String(text.prefix(512))
-            } else {
-                truncatedText = text
-            }
-            let embedding = try model.embed(text: truncatedText)
+            
+            let embedding = try model.embed(text: normalText)
             
             XCTAssertGreaterThan(embedding.count, 0, "Embedding should not be empty")
             XCTAssertEqual(embedding.count, Int(model.embeddingDimension), "Embedding size should match model dimension")
             
-            print("Generated embedding for text: '\(truncatedText.prefix(80))...'")
+            print("Generated embedding for normal text")
             print("Embedding dimension: \(embedding.count)")
             print("First 10 values: \(Array(embedding.prefix(10)))")
             
@@ -163,60 +90,73 @@ final class SwiftLlamaEmbedTests: XCTestCase {
         print("Normalized vector norm: \(norm)")
     }
     
+    func testLongTextStrategies() {
+        let expandedPath = NSString(string: modelPath).expandingTildeInPath
+        
+        do {
+            let model = try EmbeddingModel(modelPath: expandedPath)
+            
+            // Create a long text that will exceed context size
+            let baseText = """
+            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
+            The library provides a robust Swift interface to llama.cpp's powerful embedding functionality, 
+            enabling developers to seamlessly integrate advanced text embedding features into their iOS and macOS applications. 
+            With support for various pooling strategies and context management, this library offers flexible solutions 
+            for natural language processing tasks. The implementation follows best practices for memory management 
+            and error handling, ensuring reliable performance in production environments.
+            """
+            
+            let longText = String(repeating: baseText + "\n\n", count: 40)
+            
+            // Test auto strategy (default)
+            let autoEmbedding = try model.embed(text: longText)
+            XCTAssertGreaterThan(autoEmbedding.count, 0, "Auto strategy should generate embedding")
+            print("Auto strategy embedding dimension: \(autoEmbedding.count)")
+            
+            // Test truncate strategy
+            let truncateEmbedding = try model.embed(text: longText, strategy: .truncate)
+            XCTAssertGreaterThan(truncateEmbedding.count, 0, "Truncate strategy should generate embedding")
+            print("Truncate strategy embedding dimension: \(truncateEmbedding.count)")
+            
+            // Test chunking strategy
+            let chunkEmbedding = try model.embed(text: longText, strategy: .chunk(maxChunkSize: 300, overlap: 50))
+            XCTAssertGreaterThan(chunkEmbedding.count, 0, "Chunk strategy should generate embedding")
+            print("Chunk strategy embedding dimension: \(chunkEmbedding.count)")
+            
+            // Test sliding window strategy
+            let slidingEmbedding = try model.embed(text: longText, strategy: .slidingWindow(windowSize: 400))
+            XCTAssertGreaterThan(slidingEmbedding.count, 0, "Sliding window strategy should generate embedding")
+            print("Sliding window strategy embedding dimension: \(slidingEmbedding.count)")
+            
+            // All embeddings should have the same dimension
+            XCTAssertEqual(autoEmbedding.count, Int(model.embeddingDimension))
+            XCTAssertEqual(truncateEmbedding.count, Int(model.embeddingDimension))
+            XCTAssertEqual(chunkEmbedding.count, Int(model.embeddingDimension))
+            XCTAssertEqual(slidingEmbedding.count, Int(model.embeddingDimension))
+            
+        } catch {
+            XCTFail("Failed to test long text strategies: \(error)")
+        }
+    }
+    
     func testCustomConfiguration() {
         let expandedPath = NSString(string: modelPath).expandingTildeInPath
         
         let config = EmbeddingConfig(
             contextSize: 512,
             threads: 4,
-            poolingType: LLAMA_POOLING_TYPE_MEAN,
+            poolingType: LLAMA_POOLING_TYPE_MEAN
         )
         
         do {
             let model = try EmbeddingModel(modelPath: expandedPath, config: config)
-            let text = String(repeating: "Testing custom configuration.", count: 1000)
-            // 先 tokenize，若超過 contextSize，截斷
-            let contextSize = 512
-            let vocab = model.internalVocab!
-            let maxTokens = Int32(text.utf8.count) + 8
-            var tokens = Array<llama_token>(repeating: 0, count: Int(maxTokens))
-            let tokenCount = llama_tokenize(
-                vocab,
-                text,
-                Int32(text.utf8.count),
-                &tokens,
-                maxTokens,
-                true,
-                false
-            )
-            let nTokens = min(Int(tokenCount), contextSize)
-            let truncatedText: String
-            if nTokens < Int(tokenCount) {
-                let utf8View = text.utf8
-                var charCount = 0
-                var tokenSoFar = 0
-                for (i, c) in utf8View.enumerated() {
-                    charCount = i + 1
-                    var tempTokens = Array<llama_token>(repeating: 0, count: Int(maxTokens))
-                    let tempCount = llama_tokenize(
-                        vocab,
-                        String(text.utf8.prefix(charCount)),
-                        Int32(charCount),
-                        &tempTokens,
-                        maxTokens,
-                        true,
-                        false
-                    )
-                    if Int(tempCount) >= nTokens { break }
-                }
-                let idx = text.utf8.index(text.utf8.startIndex, offsetBy: charCount)
-                truncatedText = String(text.utf8[text.utf8.startIndex..<idx]) ?? String(text.prefix(512))
-            } else {
-                truncatedText = text
-            }
-            let embedding = try model.embed(text: truncatedText)
+            let text = String(repeating: "Testing custom configuration. ", count: 100)
+            
+            // Let the model handle long text automatically
+            let embedding = try model.embed(text: text)
             
             XCTAssertGreaterThan(embedding.count, 0, "Embedding should be generated with custom config")
+            XCTAssertEqual(embedding.count, Int(model.embeddingDimension), "Embedding size should match model dimension")
             print("Custom config test passed. Embedding dimension: \(embedding.count)")
             
         } catch {
