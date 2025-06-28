@@ -18,7 +18,7 @@ show_color_theme_switcher: false # 是否顯示顏色主題選擇器按鈕 (開�
 # 請前往 https://formspree.io 註冊並創建表單，然後將完整的 endpoint URL 填入下方
 formspree:
   enabled: true # 是否啟用 Formspree 聯絡表單
-  endpoint: "https://formspree.io/f/meokpngk" # 您的 Formspree 表單完整 endpoint URL
+  endpoint: "https://formspree.io/f/mldnokdo" # 您的 Formspree 表單完整 endpoint URL
 
 # Build settings
 markdown: kramdown
