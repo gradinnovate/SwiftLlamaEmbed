@@ -4,7 +4,7 @@ import llama
 
 final class SwiftLlamaEmbedTests: XCTestCase {
     
-    let modelPath = "~/Documents/SnapGoModels/mxbai-embed-large-v1-q4_k_m.gguf"
+    let modelPath = "~/Documents/Models/mxbai-embed-large-v1-q4_k_m.gguf"
     
     func testEmbeddingModelInitialization() {
         let expandedPath = NSString(string: modelPath).expandingTildeInPath
@@ -23,7 +23,17 @@ final class SwiftLlamaEmbedTests: XCTestCase {
         
         do {
             let model = try EmbeddingModel(modelPath: expandedPath)
-            let text = "Hello world, this is a test sentence."
+            let text = """
+            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
+            The library provides a robust Swift interface to llama.cpp's powerful embedding functionality, 
+            enabling developers to seamlessly integrate advanced text embedding features into their iOS and macOS applications. 
+            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
+            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
+            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
+            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
+            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
+            This is a comprehensive test of the SwiftLlamaEmbed library's embedding generation capabilities. 
+            """
             
             let embedding = try model.embed(text: text)
             
@@ -86,13 +96,13 @@ final class SwiftLlamaEmbedTests: XCTestCase {
         let config = EmbeddingConfig(
             contextSize: 256,
             threads: 4,
-            embeddings: true,
-            poolingType: LLAMA_POOLING_TYPE_MEAN
+            poolingType: LLAMA_POOLING_TYPE_MEAN,
+            n_ubatch: 1024
         )
         
         do {
             let model = try EmbeddingModel(modelPath: expandedPath, config: config)
-            let text = "Testing custom configuration."
+            let text = "Testing custom configuration.Testing custom configuration.Testing custom configuration.Testing custom configuration.Testing custom configuration.Testing custom configuration.Testing custom configuration."
             let embedding = try model.embed(text: text)
             
             XCTAssertGreaterThan(embedding.count, 0, "Embedding should be generated with custom config")
@@ -128,8 +138,9 @@ final class SwiftLlamaEmbedTests: XCTestCase {
             }
             
             // Test with whitespace only
-            let embedding = try model.embed(text: " ")
-            XCTAssertGreaterThan(embedding.count, 0, "Should handle whitespace-only text")
+            XCTAssertThrowsError(try model.embed(text: " ")) { error in
+                print("Whitespace-only text correctly threw error: \(error)")
+            }
             
         } catch {
             XCTFail("Failed during empty text test: \(error)")

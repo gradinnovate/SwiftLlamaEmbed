@@ -34,21 +34,21 @@ public struct EmbeddingConfig {
     public let contextSize: Int32
     /// Number of threads to use
     public let threads: Int32
-    /// Enable embeddings output
-    public let embeddings: Bool
     /// Pooling type for embeddings
     public let poolingType: llama_pooling_type
+    /// Number of tokens to process at once
+    public let n_ubatch: UInt32
     
     public init(
-        contextSize: Int32 = 512,
+        contextSize: Int32 = 256,
         threads: Int32 = 0, // 0 = auto-detect
-        embeddings: Bool = true,
-        poolingType: llama_pooling_type = LLAMA_POOLING_TYPE_MEAN
+        poolingType: llama_pooling_type = LLAMA_POOLING_TYPE_MEAN,
+        n_ubatch: UInt32 = 1024
     ) {
         self.contextSize = contextSize
         self.threads = threads
-        self.embeddings = embeddings
         self.poolingType = poolingType
+        self.n_ubatch = n_ubatch
     }
 }
 
@@ -90,12 +90,13 @@ public class EmbeddingModel {
         var contextParams = llama_context_default_params()
         contextParams.n_ctx = UInt32(config.contextSize)
         contextParams.n_threads = config.threads
-        contextParams.n_batch = 1 // Process one token at a time for embeddings
-        contextParams.embeddings = config.embeddings
+        contextParams.n_batch = config.n_ubatch
+        contextParams.n_ubatch = config.n_ubatch
+        contextParams.embeddings = true
         contextParams.pooling_type = config.poolingType
         contextParams.attention_type = LLAMA_ATTENTION_TYPE_NON_CAUSAL
         contextParams.offload_kqv = false // Keep KV cache on CPU for embeddings
-        
+        //print("Context params: \(contextParams)")
         guard let createdContext = llama_init_from_model(loadedModel, contextParams) else {
             llama_model_free(loadedModel)
             throw LlamaEmbedError.contextCreationFailed
@@ -123,35 +124,34 @@ public class EmbeddingModel {
     /// - Parameter text: Input text to generate embeddings for
     /// - Returns: Array of Float values representing the embedding
     public func embed(text: String) throws -> [Float] {
-        guard let _ = model,
-              let context = context,
-              let vocab = vocab else {
+        guard let context = context, let vocab = vocab else {
             throw LlamaEmbedError.contextCreationFailed
         }
         
-        // Tokenize the input text
-        let maxTokens = Int32(text.utf8.count) + 8 // Some buffer for special tokens
-        var tokens = Array<llama_token>(repeating: 0, count: Int(maxTokens))
+        // 若 text 為空或全為空白，直接丟出 tokenizationFailed
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            throw LlamaEmbedError.tokenizationFailed
+        }
         
+        // Tokenize
+        let maxTokens = Int32(text.utf8.count) + 8
+        var tokens = Array<llama_token>(repeating: 0, count: Int(maxTokens))
         let tokenCount = llama_tokenize(
             vocab,
             text,
             Int32(text.utf8.count),
             &tokens,
             maxTokens,
-            true,  // add_special (BOS token)
+            true,  // add_special (BOS)
             false  // parse_special
         )
-        
         guard tokenCount > 0 else {
             throw LlamaEmbedError.tokenizationFailed
         }
-        
-        // Resize tokens array to actual count
         tokens = Array(tokens.prefix(Int(tokenCount)))
         
         // Create batch using simpler approach
-        let batch = llama_batch_get_one(&tokens, tokenCount)
+        var batch = llama_batch_get_one(&tokens, tokenCount)
         
         // Ensure logits are enabled for the last token only
         if let logits = batch.logits {
@@ -170,20 +170,14 @@ public class EmbeddingModel {
         }
         
         // For embedding models, prefer sequence-level embeddings with pooling
-        guard let embeddingsPtr = llama_get_embeddings_seq(context, 0) else {
-            // Fallback to last token embeddings
-            guard let fallbackPtr = llama_get_embeddings_ith(context, Int32(tokenCount) - 1) else {
-                throw LlamaEmbedError.encodingFailed
-            }
+        if let embeddingsPtr = llama_get_embeddings_seq(context, 0) {
+            return Array(UnsafeBufferPointer(start: embeddingsPtr, count: Int(embeddingDimension)))
+        } else if let fallbackPtr = llama_get_embeddings_ith(context, Int32(tokenCount) - 1) {
             let embeddingSize = Int(embeddingDimension)
-            let embeddings = Array(UnsafeBufferPointer(start: fallbackPtr, count: embeddingSize))
-            return embeddings
+            return Array(UnsafeBufferPointer(start: fallbackPtr, count: embeddingSize))
+        } else {
+            throw LlamaEmbedError.encodingFailed
         }
-        
-        let embeddingSize = Int(embeddingDimension)
-        let embeddings = Array(UnsafeBufferPointer(start: embeddingsPtr, count: embeddingSize))
-        
-        return embeddings
     }
     
     /// Compute cosine similarity between two embeddings

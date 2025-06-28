@@ -88,7 +88,6 @@ public struct ExampleUsage {
         let config = EmbeddingConfig(
             contextSize: 1024,      // Larger context size
             threads: 4,             // Use 4 threads
-            embeddings: true,       // Enable embeddings
             poolingType: LLAMA_POOLING_TYPE_MEAN  // Mean pooling
         )
         

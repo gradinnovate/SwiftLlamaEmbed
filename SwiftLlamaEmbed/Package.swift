@@ -35,8 +35,8 @@ let package = Package(
         ),
         .binaryTarget(
             name: "llama",
-            url: "https://github.com/ggml-org/llama.cpp/releases/download/b5751/llama-b5751-xcframework.zip",
-            checksum: "f99861e83bb8a53745f05f8c9e328c8c0df1a465389487a81571849c021e49cc"
+            url: "https://github.com/ggml-org/llama.cpp/releases/download/b5688/llama-b5688-xcframework.zip",
+            checksum: "b7d07e66d7d6b4d236224b4130aff47f8cc4a6197eb8b95a06102ceae8e93e86"
         ),
         .testTarget(
             name: "SwiftLlamaEmbedTests",
