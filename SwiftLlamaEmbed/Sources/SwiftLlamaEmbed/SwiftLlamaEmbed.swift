@@ -36,19 +36,15 @@ public struct EmbeddingConfig {
     public let threads: Int32
     /// Pooling type for embeddings
     public let poolingType: llama_pooling_type
-    /// Number of tokens to process at once
-    public let n_ubatch: UInt32
     
     public init(
-        contextSize: Int32 = 256,
+        contextSize: Int32 = 512,  // 遵循 embedding.cpp 的預設值，通常 embedding 不需要很大的 context
         threads: Int32 = 0, // 0 = auto-detect
-        poolingType: llama_pooling_type = LLAMA_POOLING_TYPE_MEAN,
-        n_ubatch: UInt32 = 1024
+        poolingType: llama_pooling_type = LLAMA_POOLING_TYPE_MEAN
     ) {
         self.contextSize = contextSize
         self.threads = threads
         self.poolingType = poolingType
-        self.n_ubatch = n_ubatch
     }
 }
 
@@ -56,7 +52,7 @@ public struct EmbeddingConfig {
 public class EmbeddingModel {
     private var model: OpaquePointer?
     private var context: OpaquePointer?
-    private var vocab: OpaquePointer?
+    var vocab: OpaquePointer? // internal for test access
     private let config: EmbeddingConfig
     
     /// Initialize the embedding model
@@ -86,16 +82,20 @@ public class EmbeddingModel {
         // Get vocabulary
         self.vocab = llama_model_get_vocab(loadedModel)
         
-        // Create context
+        // Create context - 遵循 embedding.cpp 的參數設置
         var contextParams = llama_context_default_params()
         contextParams.n_ctx = UInt32(config.contextSize)
         contextParams.n_threads = config.threads
-        contextParams.n_batch = config.n_ubatch
-        contextParams.n_ubatch = config.n_ubatch
+        
+        // 遵循 embedding.cpp：當 n_batch < n_ctx 時，設置 n_batch = n_ctx
+        contextParams.n_batch = UInt32(config.contextSize)
+        // 對於 non-causal models，n_ubatch = n_batch
+        contextParams.n_ubatch = UInt32(config.contextSize)
+        
         contextParams.embeddings = true
         contextParams.pooling_type = config.poolingType
-        contextParams.attention_type = LLAMA_ATTENTION_TYPE_NON_CAUSAL
-        contextParams.offload_kqv = false // Keep KV cache on CPU for embeddings
+        // 不強制設置 attention_type，讓它保持 UNSPECIFIED
+        contextParams.offload_kqv = true  // 使用預設值，不強制關閉
         //print("Context params: \(contextParams)")
         guard let createdContext = llama_init_from_model(loadedModel, contextParams) else {
             llama_model_free(loadedModel)
@@ -133,7 +133,6 @@ public class EmbeddingModel {
             throw LlamaEmbedError.tokenizationFailed
         }
         
-        // Tokenize
         let maxTokens = Int32(text.utf8.count) + 8
         var tokens = Array<llama_token>(repeating: 0, count: Int(maxTokens))
         let tokenCount = llama_tokenize(
@@ -148,36 +147,56 @@ public class EmbeddingModel {
         guard tokenCount > 0 else {
             throw LlamaEmbedError.tokenizationFailed
         }
-        tokens = Array(tokens.prefix(Int(tokenCount)))
         
-        // Create batch using simpler approach
-        var batch = llama_batch_get_one(&tokens, tokenCount)
-        
-        // Ensure logits are enabled for the last token only
-        if let logits = batch.logits {
-            for i in 0..<Int(tokenCount) {
-                logits[i] = (i == Int(tokenCount) - 1) ? 1 : 0
-            }
+        // 遵循 embedding.cpp：檢查 token 數量是否超過 batch size
+        if tokenCount > config.contextSize {
+            // 截斷到 context size，但這可能影響 embedding 品質
+            print("Warning: Input text has \(tokenCount) tokens, exceeding context size \(config.contextSize). Truncating.")
         }
         
-        // Clear previous state
-        llama_memory_clear(llama_get_memory(context), false)
+        let nTokens = min(Int(tokenCount), Int(config.contextSize))
+        let finalTokens = Array(tokens.prefix(nTokens))
+
+        // 根據 embedding.cpp 的做法，用 context size 初始化 batch
+        var batch = llama_batch_init(Int32(config.contextSize), 0, 1)
+        defer {
+            llama_batch_free(batch)
+        }
         
-        // Encode the batch
-        let result = llama_encode(context, batch)
+        // 遵循 embedding.cpp 的 batch_add_seq 函數，使用 common_batch_add 邏輯
+        batch.n_tokens = 0
+        for i in 0..<nTokens {
+            // 確保不會超出 batch 容量
+            guard batch.n_tokens < Int32(config.contextSize) else { break }
+            
+            let batchIndex = Int(batch.n_tokens)
+            batch.token[batchIndex] = finalTokens[i]
+            batch.pos[batchIndex] = Int32(i)
+            batch.n_seq_id[batchIndex] = 1
+            batch.seq_id[batchIndex]![0] = 0  // seq_id = 0
+            batch.logits[batchIndex] = 1      // 對於 embedding，所有 token 都需要 logits = true
+            batch.n_tokens += 1
+        }
+
+        // 設置 embeddings 模式並清理記憶體
+        llama_set_embeddings(context, true)
+        llama_memory_clear(llama_get_memory(context), true)
+        
+        // 使用 llama_decode 進行推論（遵循 server 實作）
+        let result = llama_decode(context, batch)
         guard result == 0 else {
             throw LlamaEmbedError.encodingFailed
         }
+
+        let embeddingSize = Int(embeddingDimension)
         
-        // For embedding models, prefer sequence-level embeddings with pooling
-        if let embeddingsPtr = llama_get_embeddings_seq(context, 0) {
-            return Array(UnsafeBufferPointer(start: embeddingsPtr, count: Int(embeddingDimension)))
-        } else if let fallbackPtr = llama_get_embeddings_ith(context, Int32(tokenCount) - 1) {
-            let embeddingSize = Int(embeddingDimension)
-            return Array(UnsafeBufferPointer(start: fallbackPtr, count: embeddingSize))
-        } else {
+        // For sequence embeddings with pooling, use llama_get_embeddings_seq
+        guard let embeddingsPtr = llama_get_embeddings_seq(context, 0) else {
             throw LlamaEmbedError.encodingFailed
         }
+        
+        let embeddings = Array(UnsafeBufferPointer(start: embeddingsPtr, count: embeddingSize))
+        return embeddings
     }
     
     /// Compute cosine similarity between two embeddings
