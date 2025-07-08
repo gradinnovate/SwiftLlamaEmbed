@@ -10,11 +10,14 @@ struct Demo {
         
         // Parse command line arguments
         let arguments = CommandLine.arguments
+        let hasSilentFlag = arguments.contains("--silent")
+        let modelPathArguments = arguments.filter { !$0.starts(with: "-") }
+
         let modelPath: String
         
-        if arguments.count > 1 {
+        if modelPathArguments.count > 1 {
             // Use provided model path
-            modelPath = arguments[1]
+            modelPath = modelPathArguments[1]
         } else {
             // Use default model path
             modelPath = "~/Documents/SnapGoModels/mxbai-embed-large-v1-q4_k_m.gguf"
@@ -36,7 +39,10 @@ struct Demo {
         
         do {
             print("🔄 Loading model...")
-            let model = try EmbeddingModel(modelPath: expandedPath)
+            if hasSilentFlag {
+                print("🤫 Silent mode enabled. Llama.cpp logs will be suppressed.")
+            }
+            let model = try EmbeddingModel(modelPath: expandedPath, silent: hasSilentFlag)
             print("✅ Model loaded successfully!")
             print("📏 Embedding dimension: \(model.embeddingDimension)")
             

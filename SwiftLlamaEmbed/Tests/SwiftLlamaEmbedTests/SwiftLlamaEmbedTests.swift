@@ -14,7 +14,7 @@ final class SwiftLlamaEmbedTests: XCTestCase {
         let expandedPath = NSString(string: modelPath).expandingTildeInPath
         
         do {
-            let model = try EmbeddingModel(modelPath: expandedPath)
+            let model = try EmbeddingModel(modelPath: expandedPath, silent: true)
             XCTAssertGreaterThan(model.embeddingDimension, 0, "Embedding dimension should be greater than 0")
             print("Model loaded successfully with embedding dimension: \(model.embeddingDimension)")
         } catch {
@@ -26,7 +26,7 @@ final class SwiftLlamaEmbedTests: XCTestCase {
         let expandedPath = NSString(string: modelPath).expandingTildeInPath
         
         do {
-            let model = try EmbeddingModel(modelPath: expandedPath)
+            let model = try EmbeddingModel(modelPath: expandedPath, silent: true)
             
             // Test with normal text (should use auto strategy)
             let normalText = """
@@ -53,7 +53,7 @@ final class SwiftLlamaEmbedTests: XCTestCase {
         let expandedPath = NSString(string: modelPath).expandingTildeInPath
         
         do {
-            let model = try EmbeddingModel(modelPath: expandedPath)
+            let model = try EmbeddingModel(modelPath: expandedPath, silent: true)
             
             let text1 = "The cat is sleeping on the mat."
             let text2 = "A cat is resting on a mat."
@@ -94,7 +94,7 @@ final class SwiftLlamaEmbedTests: XCTestCase {
         let expandedPath = NSString(string: modelPath).expandingTildeInPath
         
         do {
-            let model = try EmbeddingModel(modelPath: expandedPath)
+            let model = try EmbeddingModel(modelPath: expandedPath, silent: true)
             
             // Create a long text that will exceed context size
             let baseText = """
@@ -149,7 +149,7 @@ final class SwiftLlamaEmbedTests: XCTestCase {
         )
         
         do {
-            let model = try EmbeddingModel(modelPath: expandedPath, config: config)
+            let model = try EmbeddingModel(modelPath: expandedPath, config: config, silent: true)
             let text = String(repeating: "Testing custom configuration. ", count: 100)
             
             // Let the model handle long text automatically
@@ -167,7 +167,7 @@ final class SwiftLlamaEmbedTests: XCTestCase {
     func testInvalidModelPath() {
         let invalidPath = "/invalid/path/to/model.gguf"
         
-        XCTAssertThrowsError(try EmbeddingModel(modelPath: invalidPath)) { error in
+        XCTAssertThrowsError(try EmbeddingModel(modelPath: invalidPath, silent: true)) { error in
             if case LlamaEmbedError.invalidModelPath = error {
                 // Expected error
                 print("Correctly threw invalidModelPath error")
@@ -181,7 +181,7 @@ final class SwiftLlamaEmbedTests: XCTestCase {
         let expandedPath = NSString(string: modelPath).expandingTildeInPath
         
         do {
-            let model = try EmbeddingModel(modelPath: expandedPath)
+            let model = try EmbeddingModel(modelPath: expandedPath, silent: true)
             
             // Test with empty string
             XCTAssertThrowsError(try model.embed(text: "")) { error in

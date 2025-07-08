@@ -1,6 +1,11 @@
 import Foundation
 import llama
 
+// A C-style function that does nothing, to be used as a silent logger.
+private func silent_llama_log_callback(level: ggml_log_level, text: UnsafePointer<CChar>?, user_data: UnsafeMutableRawPointer?) {
+    // This function is intentionally empty to suppress log output.
+}
+
 /// Strategy for handling text longer than context size
 public enum LongTextStrategy {
     /// Simply truncate the text to fit context size
@@ -71,8 +76,14 @@ public class EmbeddingModel {
     /// - Parameters:
     ///   - modelPath: Path to the GGUF model file
     ///   - config: Configuration for the model
-    public init(modelPath: String, config: EmbeddingConfig = EmbeddingConfig()) throws {
+    ///   - silent: If true, llama.cpp logs will be silenced
+    public init(modelPath: String, config: EmbeddingConfig = EmbeddingConfig(), silent: Bool = false) throws {
         self.config = config
+        
+        // Mute llama.cpp logs if silent is true
+        if silent {
+            llama_log_set(silent_llama_log_callback, nil)
+        }
         
         // Initialize llama backend
         llama_backend_init()
