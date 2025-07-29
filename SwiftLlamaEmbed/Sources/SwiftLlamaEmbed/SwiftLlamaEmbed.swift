@@ -45,6 +45,28 @@ public enum LlamaEmbedError: Error, LocalizedError {
     }
 }
 
+/// Pooling strategy for generating embeddings from token representations
+public enum PoolingType {
+    /// Mean pooling - average all token embeddings
+    case mean
+    /// CLS pooling - use the classification token embedding
+    case cls
+    /// Last pooling - use the last token embedding
+    case last
+    
+    /// Convert to internal llama pooling type
+    internal var llamaPoolingType: llama_pooling_type {
+        switch self {
+        case .mean:
+            return LLAMA_POOLING_TYPE_MEAN
+        case .cls:
+            return LLAMA_POOLING_TYPE_CLS
+        case .last:
+            return LLAMA_POOLING_TYPE_LAST
+        }
+    }
+}
+
 /// Configuration for embedding model
 public struct EmbeddingConfig {
     /// Context size (number of tokens)
@@ -52,12 +74,12 @@ public struct EmbeddingConfig {
     /// Number of threads to use
     public let threads: Int32
     /// Pooling type for embeddings
-    public let poolingType: llama_pooling_type
+    public let poolingType: PoolingType
     
     public init(
         contextSize: Int32 = 512,  // 遵循 embedding.cpp 的預設值，通常 embedding 不需要很大的 context
         threads: Int32 = 0, // 0 = auto-detect
-        poolingType: llama_pooling_type = LLAMA_POOLING_TYPE_MEAN
+        poolingType: PoolingType = .mean
     ) {
         self.contextSize = contextSize
         self.threads = threads
@@ -116,7 +138,7 @@ public class EmbeddingModel {
         contextParams.n_ubatch = UInt32(config.contextSize)
         
         contextParams.embeddings = true
-        contextParams.pooling_type = config.poolingType
+        contextParams.pooling_type = config.poolingType.llamaPoolingType
         // 不強制設置 attention_type，讓它保持 UNSPECIFIED
         contextParams.offload_kqv = true  // 使用預設值，不強制關閉
         //print("Context params: \(contextParams)")
@@ -154,8 +176,9 @@ public class EmbeddingModel {
     /// - Parameters:
     ///   - text: Input text to generate embeddings for
     ///   - strategy: Strategy to handle text longer than context size
+    ///   - silent: Whether to suppress warning messages (default: false)
     /// - Returns: Array of Float values representing the embedding
-    public func embed(text: String, strategy: LongTextStrategy) throws -> [Float] {
+    public func embed(text: String, strategy: LongTextStrategy, silent: Bool = false) throws -> [Float] {
         guard let context = context, let vocab = vocab else {
             throw LlamaEmbedError.contextCreationFailed
         }
@@ -191,17 +214,23 @@ public class EmbeddingModel {
             
             switch actualStrategy {
             case .truncate:
-                print("Warning: Input text has \(tokenCount) tokens, exceeding context size \(config.contextSize). Truncating.")
+                if !silent {
+                    print("Warning: Input text has \(tokenCount) tokens, exceeding context size \(config.contextSize). Truncating.")
+                }
                 let nTokens = min(Int(tokenCount), Int(config.contextSize))
                 let finalTokens = Array(tokens.prefix(nTokens))
                 return try embedSingleChunk(finalTokens)
                 
             case .chunk(let maxChunkSize, let overlap):
-                print("Auto-selected chunking strategy for long text (\(tokenCount) tokens)")
+                if !silent {
+                    print("Auto-selected chunking strategy for long text (\(tokenCount) tokens)")
+                }
                 return try embedWithChunking(tokens: tokens, tokenCount: Int(tokenCount), maxChunkSize: Int(maxChunkSize), overlap: Int(overlap))
                 
             case .slidingWindow(let windowSize):
-                print("Auto-selected sliding window strategy for long text (\(tokenCount) tokens)")
+                if !silent {
+                    print("Auto-selected sliding window strategy for long text (\(tokenCount) tokens)")
+                }
                 return try embedWithSlidingWindow(tokens: tokens, tokenCount: Int(tokenCount), windowSize: Int(windowSize))
                 
             case .auto:
